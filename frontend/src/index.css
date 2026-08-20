@@ -1,0 +1,65 @@
+  @import "tailwindcss";
+
+  @theme {
+    --color-primaryColor: #0067FF;
+    --color-headingColor: #181A1E;
+    --color-textColor: #4E545F;
+  }
+  @layer base {
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+    section {
+      @apply py-[75px];
+    }
+  }
+
+
+
+  @layer components {
+    .btn{
+      @apply bg-primaryColor py-[15px] px-[35px] rounded-full text-white font-[600] mt-[38px];
+    }
+
+    .heading {
+      @apply text-[44px] leading-[54px] font-[700] text-headingColor;
+    }
+
+    .text__para {
+      @apply text-[18px] leading-[30px] font-[400] text-textColor mt-[18px];
+    }
+    .header{
+      @apply bg-[url('./assets/images/mask.png')] bg-no-repeat bg-cover bg-center w-full h-[100px] leading-[100px];
+    }
+
+    .hero__section{
+      @apply bg-[url('./assets/images/hero-bg.png')] bg-no-repeat bg-cover bg-center;
+
+    }
+    }
+    
+
+    @media only screen and (max-width: 768px) {
+      .heading{
+          @apply text-[26px] leading-[36px];
+      }
+      .text__para{
+          @apply text-[16px] leading-7 mt-3;
+      }
+      
+    }
+  .site-container {
+  width: calc(100% - 40px);
+  max-width: 1170px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header-container {
+  width: calc(100% - 40px);
+  max-width: 1170px;
+  margin-left: auto;
+  margin-right: auto;
+}
