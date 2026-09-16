@@ -3,6 +3,12 @@ import Doctor from "../models/DoctorSchema.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
+const generateToken = (user) => {
+        return jwt.sign({id:user._id, role:user.role}, process.env.JWT_SECRET_KEY, {
+            expiresIn: '15d', 
+        })
+}
+
 export const register = async(req, res) => {
 
     const {email, password, name, photo, gender, role} = req.body;
@@ -12,15 +18,15 @@ export const register = async(req, res) => {
             let user = null;
 
             if(role === "patient"){
-                user =User.findOne({email})
+                user = await User.findOne( {email });
             }
             else if(role === "doctor"){
-                user = Doctor.findOne({email})
+                user = await Doctor.findOne({ email });
             }
 
             // check is user exists  
             if(user){
-                return res.status(400).json({message: "User already exists"})
+                return res.status(400).json({message: "User already exists"});
             }
 
 
@@ -33,18 +39,24 @@ export const register = async(req, res) => {
                     name, email, password: hashPassword, photo, gender, role
                 })
             }
-            if(role === "doctor"){
+            else if(role === "doctor"){
                 user = new Doctor({
                     name, email, password: hashPassword, photo, gender, role
                 })
             }
 
-            await user.save()
+            else {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid role"});
+            }
 
-            res.status(200).json({success: true, message: "User successfully created"})
+            await user.save()
 
 
     } catch (err) {
+
+        console.log(err);
         res
         .status(500)
         .json({success: false, message: 'Internal server error, Try again'})
@@ -52,9 +64,48 @@ export const register = async(req, res) => {
 }
 
 export const login = async(req, res) => {
+
+    const{email, password} = req.body;
+
     try {
-        
+
+        let user = null;
+
+        const patient = await User.findOne({email});
+        const doctor = await Doctor.findOne({email});
+
+        if(patient){
+            user = patient;
+        }
+        else if(doctor){
+            user = doctor;
+        }
+
+        // check if user exists
+
+        if(!user){
+            return res.status(404).json({ message: "User not found"});
+        }
+
+            // comparre password
+        const isMatch = await bcrypt.compare(
+            req.body.password, 
+            user.password
+        );
+
+        if(!isMatch){
+            return res.status(400).json({ success: false, message: "Invalid credentials"});
+        }
+
+        const token = generateToken(user);
+
+        const {password, role, appointment, ...rest} = user._doc
+
+        res.status(200).json({ success: true, message: "successfully logged in", token, data: {...rest}, role});
+
     } catch (err) {
-        
+        res
+        .status(500)
+        .json({ success: false, message: "Failed to login "});
     }
 }
