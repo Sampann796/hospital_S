@@ -59,6 +59,13 @@ export const getAllUser = async (req, res) => {
 
     try{
 
+        const {query} = req.query
+        let doctors;
+
+        if(query){
+            doctors = await user.find({isApproved}).select("-password")
+        }
+
         const users = await user.find({}).select("-password")
 
         res
