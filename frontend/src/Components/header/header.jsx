@@ -1,9 +1,8 @@
-import {useEffect, useRef} from "react";
-import logo from "../../assets/images/logo.png";
-import userImg from "../../assets/images/avatar-icon.png";
+import {useEffect, useRef, useContext} from "react";
+import logo from "../../assets/images/logo.png";     
 import {NavLink, Link} from 'react-router-dom';
 import {BiMenu} from "react-icons/bi";
-
+import {AuthContext} from '../../context/AuthContext.jsx';
 const navLinks = [
     {
         path: "/",
@@ -23,6 +22,7 @@ const navLinks = [
 const Header = () => {
     const headerRef = useRef(null);
     const menuRef = useRef(null);
+    const {user, role, token} = useContext(AuthContext);
 
 const handleStickyHeader = () => {
     window.addEventListener("scroll", () => {
@@ -72,20 +72,22 @@ const toggleMenu = () => {
 
             {/*======= navRight =======*/}
             <div className = "flex items-center gap-4">
-                    
-                    <div className="hidden">
-                        <Link to="/">
+                {
+                    token && user  ? <div>
+                        <Link to={`${role === 'doctor' ? '/doctor/profile/me' : '/user/profile/me'}`}>
                         <figure className = "w-[35px] h-[35px] rounded-full cursor-pointer">
-                            <img src={userImg} className = "w-full rounded-full" alt="" />
+                            <img src={user?.photo} className = "w-full rounded-full" alt="" />
                         </figure>
                         </Link>
-                    </div>
-
-                    <Link to="/login">
+                    </div> : <Link to="/login">
                         <button className="bg-primaryColor h-12 min-w-[90px] px-6 text-white text-[16px] font-[600] flex items-center justify-center rounded-full">
                             Login
                         </button>
                     </Link>
+                }
+                    
+                    
+                    
                     <span className="md:hidden" onClick={toggleMenu}>
                         <BiMenu className = " h-6 w-6 cursor-pointer"/>
                     </span>
