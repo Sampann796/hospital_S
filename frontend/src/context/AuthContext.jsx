@@ -1,9 +1,19 @@
 import {createContext, useContext, useEffect, useReducer } from "react";
 
+const getSavedUser = () => {
+try {
+const user = localStorage.getItem("user");
+return user ? JSON.parse(user) : null;
+} catch (error) {
+console.error("Failed to read saved user:", error);
+return null;
+}
+};
+
 const initialState = {
-    user: localStorage.getItem('user') !== undefined ? JSON.parse(localStorage.getItem('user')) : null,
-    role: localStorage.getItem('role') || null,
-    token: localStorage.getItem('token') || null,
+    user: getSavedUser(),
+    role: JSON.parse(localStorage.getItem('role') || 'null'),
+    token: JSON.parse(localStorage.getItem('token') || 'null'),
 }
 
 export const AuthContext = createContext(initialState);
