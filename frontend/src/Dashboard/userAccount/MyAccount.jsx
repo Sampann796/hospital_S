@@ -2,13 +2,21 @@
 import {useContext, useState} from 'react';
 import {AuthContext} from '../../context/AuthContext'
 import userImg from '../../assets/images/doctor-img01.png'
+
 import MyBookings from './MyBookings';
 import Profile from './Profile';
+
+import useGetProfile from "../../hooks/useFetchData"
+import { BASE_URL } from '../../config';
 
 const MyAccount = () => {
 
   const{dispatch} = useContext(AuthContext);
-  const [tab,setTab] = useState('bookings')
+  const [tab,setTab] = useState('bookings');
+
+  const {data:userData, loading, error} = useGetProfile(`${BASE_URL}/users/profile/me`);
+
+  console.log(userData, 'userdata')
 
   const handleLogout = () => {
     dispatch({type:'LOGOUT'})
