@@ -1,7 +1,10 @@
-import {useState, useEffect} from 'react';
-import { token } from '../config';
+import {useState, useEffect, useContext} from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const useFetchData = (url) => {
+
+    const { token } = useContext(AuthContext);
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -18,8 +21,10 @@ const useFetchData = (url) => {
             console.log("Token start:", token?.slice(0, 15));
 
                 const res = await fetch(url, {
-                headers:{Authorization :`Bearer ${token}`}
-            })
+                    headers: {
+                    Authorization: `Bearer ${token}`,
+                        },
+                    });
 
             const result = await res.json()
 
@@ -31,7 +36,7 @@ const useFetchData = (url) => {
             setLoading(false);
 
             } catch (error) {
-
+                setError(null);
                 setLoading(false);
                 setError(error.message)
                 
@@ -39,7 +44,7 @@ const useFetchData = (url) => {
         }
  
         fetchData()
-    },[url])
+    },[url, token])
 
   return {
     data, 

@@ -26,6 +26,12 @@ const MyAccount = () => {
      <section>
       <div className= "max-w-[1170px] px-5 mx-auto">
 
+      { loading && <p>Loading profile...</p>}
+      {error && (
+      <p className="py-6 text-center text-red-500">
+        Failed to load profile: {error}
+      </p>
+    )}
       <div className = "grid md:grid-cols-3 gap-10">
 
         <div className = "pb-[50px] px-[30px] rounded-md">
@@ -75,6 +81,7 @@ const MyAccount = () => {
         </div>
 
       </div>
+      
 
     </div>
      </section>

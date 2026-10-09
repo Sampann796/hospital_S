@@ -1,19 +1,19 @@
-import {createContext, useContext, useEffect, useReducer } from "react";
+import {createContext, useEffect, useReducer } from "react";
 
-const getSavedUser = () => {
+const getSavedValue = (key) => {
 try {
-const user = localStorage.getItem("user");
-return user ? JSON.parse(user) : null;
+const value = localStorage.getItem(key);
+return value ? JSON.parse(value) : null;
 } catch (error) {
-console.error("Failed to read saved user:", error);
+console.error(`Failed to read ${key}:`, error);
 return null;
 }
 };
 
 const initialState = {
-    user: getSavedUser(),
-    role: JSON.parse(localStorage.getItem('role') || 'null'),
-    token: JSON.parse(localStorage.getItem('token') || 'null'),
+    user: getSavedValue('user'),
+    role: getSavedValue('role'),
+    token: getSavedValue('token'),
 }
 
 export const AuthContext = createContext(initialState);
@@ -49,10 +49,18 @@ export const AuthContextProvider = ({children}) =>  {
     const [state, dispatch] = useReducer(authReducer, initialState)
 
     useEffect(() => {
-        localStorage.setItem('user', JSON.stringify(state.user));
-        localStorage.setItem('token', JSON.stringify(state.token));
-        localStorage.setItem('role', JSON.stringify(state.role));
-    },[state])
+    const saveValue = (key, value) => {
+        if (value == null) {
+            localStorage.removeItem(key);
+        } else {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+    };
+
+    saveValue('user', state.user);
+    saveValue('token', state.token);
+    saveValue('role', state.role);
+}, [state]);
 
 
     return <AuthContext.Provider value={{user:state.user, token:state.token, role:state.role, dispatch}}>
