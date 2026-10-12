@@ -7,7 +7,7 @@ export const updateUser = async (req, res) => {
 
     try{
 
-        const updatedUser = await user.findByIdAndUpdate(id, {$set:req.body}, {new:true})
+        const updatedUser = await User.findByIdAndUpdate(id, {$set:req.body}, {new:true})
 
         res.status(200).json({success:true, message:'Successfully updated', data:updatedUser})
 
@@ -40,7 +40,7 @@ export const getSingleUser = async (req, res) => {
 
     try{
 
-        const users = await user.findById(id).select("-password")
+        const users = await User.findById(id).select("-password")
 
         res
         .status(200)
@@ -63,10 +63,10 @@ export const getAllUser = async (req, res) => {
         let doctors;
 
         if(query){
-            doctors = await user.find({isApproved}).select("-password")
+            doctors = await User.find({isApproved}).select("-password")
         }
 
-        const users = await user.find({}).select("-password")
+        const users = await User.find({}).select("-password")
 
         res
         .status(200)
