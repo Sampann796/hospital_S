@@ -85,20 +85,42 @@ export const getAllDoctor = async (req, res) => {
     }
 }
 
+
 export const getDoctorProfile = async (req, res) => {
-    const doctorId = req.doctorId;
+
     
-            try{
-                const doctor = await Doctor.findById(doctorId)
-    
-                if(!doctor){
-                    return res.status(404).json({success:false, message:'doctor not found'})
-                }
-                const{password, ...rest} = doctor._doc
-                const appointment = await Booking.find({doctor:doctorId}) 
-                res.status(200).json({success:true, message:'doctor found', data:{...rest, appointment}})
+    const doctorId = req.userId;
+
+
+    try {
+        const doctor = await Doctor.findById(doctorId).select("-password");
+
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: "Doctor not found"
+            });
+        }
+
+        const appointment = await BookingSchema.find({
+            doctor: doctorId
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Doctor found",
+            data: {
+                ...doctor.toObject(),
+                appointment
             }
-         catch(err){
-            res.status(500).json({success:false, message:'Failed to fetch doctor profile'})
-         }
-}
+        });
+
+    } catch (err) {
+        console.error("Get doctor profile error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch doctor profile"
+        });
+    }
+};
